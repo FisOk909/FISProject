@@ -327,8 +327,28 @@ contract SimpleCoinToken is BurnableToken {
   }
     
 }
- 
-contract Crowdsale is Ownable {
+
+contract Whitelisted is Ownable {
+    
+
+  mapping(address => bool) public whitelist;
+  
+  modifier inWL() {
+      require(whitelist[msg.sender]);
+      _;
+  }
+  
+  function addToWhiteList(address _address) public onlyOwner {
+      whitelist[_address] = true;
+  } 
+  function delFromWhiteList(address _address) public onlyOwner {
+      whitelist[_address] = false;
+  }
+  
+
+}
+
+contract Crowdsale is Whitelisted {
     
   using SafeMath for uint;
     
@@ -387,7 +407,7 @@ contract Crowdsale is Ownable {
       rate = howMuch.mul(1 ether);
   }
  
-  function createTokens() saleIsOn isUnderHardcap public payable {
+  function createTokens() inWL saleIsOn isUnderHardcap public payable {
     pokupatel[msg.sender] = pokupatel[msg.sender].add(msg.value);
     uint256 tokens = rate.mul(msg.value).div(1 ether);
     alltokens = alltokens.add(tokens);
@@ -439,3 +459,4 @@ contract Crowdsale is Ownable {
   
     
 }
+
