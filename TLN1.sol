@@ -287,8 +287,7 @@ contract Ownable {
     owner = address(0);
   }
 }
- contract BurnableToken is BasicToken {
-
+ contract BurnableToken is StandardToken {
   event Burn(address indexed burner, uint256 value);
 
   /**
@@ -347,9 +346,9 @@ contract Crowdsale is Ownable {
   
   SimpleCoinToken public token; // = new SimpleCoinToken();
  
-  uint start = 1526774400;
+  uint256 public start;
   
-  uint end = 1538351999;
+  uint256 public end ;
     
   uint period = end.sub(start);
  
@@ -378,6 +377,12 @@ contract Crowdsale is Ownable {
       require(alltokens < softcap && now > end && pokupatel[msg.sender] != 0);
       _;
   }
+  function StartICO(uint256 setStart) public onlyOwner {
+      start = setStart;
+  } 
+  function endICO(uint256 setEnd) public onlyOwner {
+      end = setEnd;
+  } 
  
   function createTokens() saleIsOn isUnderHardcap public payable {
     pokupatel[msg.sender] = pokupatel[msg.sender].add(msg.value);
@@ -393,11 +398,11 @@ contract Crowdsale is Ownable {
     } else if(now >= start + (period).div(4).mul(2) && now < start + (period).div(4).mul(3)) {
       bonusTokensdata = tokens.div(20);   
     }*/
-     if        (pokupatel[msg.sender]>10000 && pokupatel[msg.sender]<50000){
+     if        (pokupatel[msg.sender] > 10000*10e18 && pokupatel[msg.sender]<50000*10e18) {
         bonusTokensvalue = tokens.div(100).mul(3);
-    } else if (pokupatel[msg.sender]>50000 && pokupatel[msg.sender]<100000){
+    } else if (pokupatel[msg.sender]>50000*10e18 && pokupatel[msg.sender]<100000*10e18){
         bonusTokensvalue = tokens.div(100).mul(5);
-    } else if (pokupatel[msg.sender]>10000000){
+    } else if (pokupatel[msg.sender]>100000*10e18){
         bonusTokensvalue = tokens.div(100).mul(7);
     }    
      if        (alltokens<300000000){
