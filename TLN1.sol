@@ -352,7 +352,7 @@ contract Crowdsale is Ownable {
     
   uint period = end.sub(start);
  
-  uint rate = 100 * 1 ether;
+  uint public rate;
   
   uint256 softcap = 2000000000;
   
@@ -383,6 +383,9 @@ contract Crowdsale is Ownable {
   function endICO(uint256 setEnd) public onlyOwner {
       end = setEnd;
   } 
+  function costTokens (uint256 howMuch) public onlyOwner {
+      rate = howMuch.mul(1 ether);
+  }
  
   function createTokens() saleIsOn isUnderHardcap public payable {
     pokupatel[msg.sender] = pokupatel[msg.sender].add(msg.value);
