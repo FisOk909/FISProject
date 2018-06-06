@@ -328,27 +328,8 @@ contract SimpleCoinToken is BurnableToken {
     
 }
 
-contract Whitelisted is Ownable {
-    
 
-  mapping(address => bool) public whitelist;
-  
-  modifier inWL() {
-      require(whitelist[msg.sender]);
-      _;
-  }
-  
-  function addToWhiteList(address _address) public onlyOwner {
-      whitelist[_address] = true;
-  } 
-  function delFromWhiteList(address _address) public onlyOwner {
-      whitelist[_address] = false;
-  }
-  
-
-}
-
-contract Crowdsale is Whitelisted {
+contract Crowdsale is Ownable {
     
   using SafeMath for uint;
     
@@ -380,6 +361,8 @@ contract Crowdsale is Whitelisted {
   
   mapping (address => uint256 ) pokupatel; 
   
+  mapping (address => bool) whitelist;
+  
  
   constructor() public {  
       token = new SimpleCoinToken();
@@ -397,6 +380,18 @@ contract Crowdsale is Whitelisted {
       require(alltokens < softcap && now > end && pokupatel[msg.sender] != 0);
       _;
   }
+    modifier inWL() {
+      require(whitelist[msg.sender]);
+      _;
+  }
+  
+  /*function addToWhiteList(address _address) public onlyOwner {
+      whitelist[_address] = true;
+  } 
+  function delFromWhiteList(address _address) public onlyOwner {
+      whitelist[_address] = false;
+  }*/
+  
   function StartICO(uint256 setStart) public onlyOwner {
       start = setStart;
   } 
@@ -407,7 +402,7 @@ contract Crowdsale is Whitelisted {
       rate = howMuch.mul(1 ether);
   }
  
-  function createTokens() inWL saleIsOn isUnderHardcap public payable {
+  function createTokens() /*inWL*/ saleIsOn isUnderHardcap public payable {
     pokupatel[msg.sender] = pokupatel[msg.sender].add(msg.value);
     uint256 tokens = rate.mul(msg.value).div(1 ether);
     alltokens = alltokens.add(tokens);
